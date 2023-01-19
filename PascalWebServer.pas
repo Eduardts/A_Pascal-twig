@@ -3,7 +3,10 @@ program PascalWebServer;
 {$mode objfpc}{$H+}
 
 uses
-  SysUtils, fpHTTPServer, Classes, HTTPDefs, TemplateHandler;
+  SysUtils, fpHTTPServer, Classes, HTTPDefs, TemplateHandler; fphttp, fpmimetypes,
+  // Add new units for environmental monitoring
+  EnvMonitor, IAMSystem;
+
 
 type
   TMyServer = class(TFPHTTPServer)
@@ -12,8 +15,34 @@ type
                            var ARequest: TFPHTTPConnectionRequest;
                            var AResponse: TFPHTTPConnectionResponse); 
   end;
+type
+  TEnvironmentalData = record
+    Temperature: Double;
+    Humidity: Double;
+    AirQuality: Integer;
+    Timestamp: TDateTime;
+  end;
+  TUser = record
+    Username: string;
+    PasswordHash: string;
+    Role: string; // Admin, User, Guest
+    LastLogin: TDateTime;
+  end;
 
-procedure TMyServer.RequestHandler(Sender: TObject;
+
+TMyServer = class(TFPHTTPServer)
+private
+  EnvironmentalData: array of TEnvironmentalData;
+  Users: array of TUser;
+  function GetSensorData: TEnvironmentalData;
+  function AuthenticateUser(Username, Password: string): Boolean;
+  function GetUserRole(Username: string): string;
+public
+  procedure HandleRequest(var ARequest: TFPHTTPConnectionRequest;
+    var AResponse: TFPHTTPConnectionResponse); override;
+    
+procedure 
+TMyServer.RequestHandler(Sender: TObject;
                                  var ARequest: TFPHTTPConnectionRequest;
                                  var AResponse: TFPHTTPConnectionResponse);
 var
