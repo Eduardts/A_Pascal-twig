@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <p>{{ content }}</p>
+
+    <div class="wrap">
+        <div id="icon-generic" class="icon32"></div>
+        <h2>{{ wp.__('Twig Settings') }}</h2>
+        <form method="post" action="{{ action }}">
+            {% if message is defined %}
+                <div class="message updated below-h2">
+                    <p>{{ message }}</p>
+                </div>
+            {% endif %}
+            {% if error is defined %}
+                <div class="message error below-h2">
+                    <p>{{ error }}</p>
+                </div>
+            {% endif %}
+            <h3>{{ wp.__('Template Cache') }}</h3>
+            <p>
+                {{ wp.__('This will cause all templates to be recompiled down to plain optimized code.') }}
+            </p>
+            {{ nonce|raw }}
+            <p class="submit">
+                <input type="submit" name="submit" id="submit" class="button button-primary" value="{{ wp.__('Clear Template Cache') }}">
+            </p>
+        </form>
+        <label class="screen-reader-text" for="{{ name }}">
+            {{ wp.__('Custom Template') }}
+        </label>
+
+        <select name="{{ name }}">
+            <option value="">{{ wp.__('Default Template') }}</option>
+            {% for file, name in templates %}
+                <option value="{{ file }}"{% if value == file %} selected="selected"{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</body>
+</html>
+
